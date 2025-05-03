@@ -43,31 +43,43 @@ int ponto (const char *str, double *x, double *y, char *txt_original){
     return 1;
 }
 
-//Função para identificar Int
+//Função para identificar Inteiro
 int str_inteiro (const char *str){
-  char *end;
-  strtol(str, &end, 10);
-  return *end == '\0';
+    char *end;
+    strtol(str, &end, 10);
+    return *end == '\0';
 }
 
 //Função para identificar Float
 int str_float (const char *str) {
-  char *end;
-  strtod(str, &end);
-  return *end == '\0' && strchr(str, '.');
+    char *end;
+    strtod(str, &end);
+    return *end == '\0' && strchr(str, '.');
 }
 
 //Funções para comparar/ordenar os elementos de cada função
 //Função para comparar os Pontos
 int comparar_pontos(const void *a, const void *b) {
-  double d1 = ((Pontos *)a)->distancia;
-  double d2 = ((Pontos *)b)->distancia;
+    double d1 = ((Pontos *)a)->distancia;
+    double d2 = ((Pontos *)b)->distancia;
 
-  if (d1 < d2) return -1;
-  else if (d1 > d2) return 1;
-  else return 0;
+    if (d1 < d2) return -1;
+    else if (d1 > d2) return 1;
+    else return 0;
 }
 
+//Função para comparar Inteiros
+int comparar_inteiros(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+//Função para comparar Double(Float)
+int comparar_double(const void *a, const void *b) {
+  double diff = *(double *)a - *(double *)b;
+  if (diff < 0) return -1;
+  else if (diff > 0) return 1;
+  else return 0;
+}
 
 int main (){
 
