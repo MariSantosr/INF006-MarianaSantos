@@ -17,9 +17,30 @@ typedef struct {
 } Pontos;
 
 //Função para identificar Pontos
-int ponto (const char *s, double *x, double *y, double *txt_original){
-  
+int ponto (const char *str, double *x, double *y, char *txt_original){
+    char temp[64];
+    char *virgula, *xstr, *ystr, *end1, *end2;
+    size_t len = strlen(str);
 
+    if (str[0] != '(' || str[len - 1] != ')') return 0;
+
+    strncpy(temp, str + 1, len - 2);  
+    temp[len - 2] = '\0';  
+
+    virgula = strchr(temp, ',');
+    if (!virgula) return 0;
+
+    *virgula = '\0';  
+    xstr = temp;
+    ystr = virgula + 1;
+
+    *x = strtod(xstr, &end1);
+    *y = strtod(ystr, &end2);
+
+    if (*end1 != '\0' || *end2 != '\0') return 0;  
+
+    strcpy(txt_original, str);  
+    return 1;
 }
 
 //Função para identificar Int
