@@ -75,11 +75,14 @@ int comparar_inteiros(const void *a, const void *b) {
 
 //Função para comparar Double(Float)
 int comparar_double(const void *a, const void *b) {
-  double diff = *(double *)a - *(double *)b;
-  if (diff < 0) return -1;
-  else if (diff > 0) return 1;
+  double diferenca = *(double *)a - *(double *)b;
+  if (diferenca < 0) return -1;
+  else if (diferenca > 0) return 1;
   else return 0;
 }
+
+//Função para ordenar Strings (ordem alfabética)
+
 
 int main (){
 
