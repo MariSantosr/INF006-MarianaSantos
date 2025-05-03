@@ -16,9 +16,15 @@ typedef struct {
   char txt_original[255];
 } Pontos;
 
+//Função para identificar Pontos
+int ponto (const char *s, double *x, double *y, double *txt_original){
+  
 
+}
 
-
+//Função para identificar Int
+//Função para identificar Float
+//Função para identificar String 
 
 
 int main (){
@@ -29,7 +35,7 @@ int main (){
   if (!fp_in || !fp_out) {
       perror("Erro ao abrir o arquivo solicitado");
       return 1;
-  }
+  } 
 
 
 
