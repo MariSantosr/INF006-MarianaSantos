@@ -44,7 +44,14 @@ int ponto (const char *str, double *x, double *y, char *txt_original){
 }
 
 //Função para identificar Int
+int inteiro (const char *str){
+  char *end;
+  strtol(str, &end, 10);
+  return *end == '\0';
+}
+
 //Função para identificar Float
+
 //Função para identificar String 
 
 
