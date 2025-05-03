@@ -55,10 +55,18 @@ int str_float (const char *str) {
   char *end;
   strtod(str, &end);
   return *end == '\0' && strchr(str, '.');
-
-
 }
-//Função para identificar String 
+
+//Funções para comparar/ordenar os elementos de cada função
+//Função para comparar os Pontos
+int comparar_pontos(const void *a, const void *b) {
+  double d1 = ((Pontos *)a)->distancia;
+  double d2 = ((Pontos *)b)->distancia;
+
+  if (d1 < d2) return -1;
+  else if (d1 > d2) return 1;
+  else return 0;
+}
 
 
 int main (){
