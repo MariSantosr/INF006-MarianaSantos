@@ -15,12 +15,37 @@ typedef struct {
     int topoPilha;
 }Pilha;
 
+//Função para inicializar a pilha vazia 
+void inicializar_pilha(Pilha *p) {
+    p->topoPilha = -1;
+}
+
+//Função para caso a pilha esteja vazia 
+int pilha_vazia(Pilha *p) {
+    return (p->topoPilha == -1);
+}
+
+
+
+
+
+
+
+
 //main principal
 int main () {
 
 //chamando os arquivos de entrada/saida
+    FILE *fp_in = fopen("L1Q2.in", "r");
+    FILE *fp_out = fopen("L1Q2.out", "w");
 
+    if (!fp_in || !fp_out) {
+        perror("Erro ao abrir o arquivo solicitado");
+        return 1;
+    }
 
-
+//fecha os arquivos abertos de entrada/saida
+    fclose(fp_in);
+    fclose(fp_out);
     return 0;
 }
