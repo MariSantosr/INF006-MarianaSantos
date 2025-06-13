@@ -83,7 +83,7 @@ void processar_linha(char *linha, FILE *fp_out) {
         if (temp_contador_pop > 0) {
             char pop_op_str[20];
             sprintf(pop_op_str, "%dx-pop", temp_contador_pop);
-            add_op_to_buffer(saida_buffer, pop_op_str, &primeira_op);
+            adicionar_operacaoBufferSaida(saida_buffer, pop_op_str, &primeira_op);
         }
 
 //Empilha o novo nome
