@@ -117,6 +117,17 @@ int main () {
         return 1;
     }
 
+    char linha[LINHA_MAX]; 
+
+    while (fgets(linha, sizeof(linha), fp_in)) {
+        size_t linhaTamanho = strlen(linha);
+        if (linhaTamanho > 0 && linha[linhaTamanho - 1] == '\n') {
+            linha[linhaTamanho - 1] = '\0'; 
+        }
+
+        processar_linha(linha, fp_out);
+    }
+
 //fecha os arquivos abertos de entrada/saida
     fclose(fp_in);
     fclose(fp_out);
