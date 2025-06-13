@@ -105,10 +105,10 @@ void processar_linha(char *linha, FILE *fp_out) {
     fprintf(fp_out, "%s\n", saida_buffer);
 }
 
-//main principal
+//Main principal
 int main () {
 
-//chamando os arquivos de entrada/saida
+//Chamando os arquivos de entrada/saida
     FILE *fp_in = fopen("L1Q2.in", "r");
     FILE *fp_out = fopen("L1Q2.out", "w");
 
@@ -128,7 +128,7 @@ int main () {
         processar_linha(linha, fp_out);
     }
 
-//fecha os arquivos abertos de entrada/saida
+//Fecha os arquivos abertos de entrada/saida
     fclose(fp_in);
     fclose(fp_out);
     return 0;
