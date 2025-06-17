@@ -97,7 +97,7 @@ int main() {
     FILE *fp_out = fopen("L1Q1.out", "w");
 
     if (!fp_in || !fp_out) {
-        perror("Erro ao abrir arquivo");
+        perror("Erro ao abrir o arquivo solicitado");
         return 1;
     }
 
