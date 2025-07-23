@@ -2,7 +2,24 @@
 #include <stdlib.h>
 #include <string.h> 
 
+typedef struct No {
+    struct Node *esq;
+    struct Node *dir;
+    int valor;
+} No;
 
+
+No* criarNo(int valor) {
+    No* novoNo = (No*)malloc(sizeof(No));
+    if (novoNo == NULL) {
+        perror("Erro na alocação de memória do Nó");
+        exit(EXIT_FAILURE);
+    }
+    novoNo->valor = valor;
+    novoNo->esq = NULL;
+    novoNo->dir = NULL;
+    return novoNo;
+}
 
 
 
