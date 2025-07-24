@@ -28,7 +28,7 @@ No* criarNo(int valor) {
     return novoNo;
 }
 
-No* inserir(int valor, No* raiz) {
+No* inserir(No* raiz, int valor) {
     if (raiz == NULL) {
         return criarNo(valor);
     }
