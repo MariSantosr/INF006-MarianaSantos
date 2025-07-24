@@ -5,8 +5,8 @@
 #include <string.h> 
 
 typedef struct No {
-    struct Node *esq;
-    struct Node *dir;
+    struct No *esq;
+    struct No *dir;
     int valor;
 } No;
 
