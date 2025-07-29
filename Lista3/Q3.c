@@ -39,9 +39,8 @@ No* inserir(No* raiz, int valor) {
 
     if (valor < raiz->valor) {
         raiz->esq = inserir(raiz->esq, valor);
-    }
-    else { 
-        raiz->dir = insert(raiz->dir, valor);
+    } else { 
+        raiz->dir = inserir(raiz->dir, valor);
     }
 
     return raiz; 
@@ -56,13 +55,13 @@ No* encontrarNoMenor(No* no) {
 
 No* removerNo(int valor, No* raiz) {
     if (raiz == NULL) {
-        return inserir(raiz, valor);
+        return raiz;
     }
 
     if (valor < raiz->valor) {
-        raiz->esq = removerNo(raiz->esq, valor);
+        raiz->esq = removerNo(valor, raiz->esq);
     } else if (valor > raiz->valor) {
-        raiz->dir = removerNo(raiz->dir, valor);
+        raiz->dir = removerNo(valor, raiz->dir);
     } else {
         if (raiz->esq == NULL) {
             No* temporario = raiz->dir;
@@ -75,14 +74,11 @@ No* removerNo(int valor, No* raiz) {
         }
 
         No* temporario = encontrarNoMenor(raiz->dir);
-
         raiz->valor = temporario->valor;
-
-        raiz->dir = removerNo(raiz->dir, temporario->valor);
+        raiz->dir = removerNo(temporario->valor, raiz->dir);
     }
-    
+
     return raiz;
-    
 }
 
 void coletarInfoNo(No* raiz, int profundidadeAtual, infoNo** lista, int* contador, int* capacidade) {
@@ -96,7 +92,7 @@ void coletarInfoNo(No* raiz, int profundidadeAtual, infoNo** lista, int* contado
         *capacidade *= 2;
         *lista = (infoNo*)realloc(*lista, *capacidade * sizeof(infoNo));
         if (*lista == NULL) {
-            perror("Erro na alocação de memória da lista de Nós");
+            perror("Erro ao alocar memória da lista de Nós");
             exit(EXIT_FAILURE);
         }
     }
@@ -116,11 +112,20 @@ void excluirArvore(No* raiz) {
     excluirArvore(raiz->esq);  
     excluirArvore(raiz->dir); 
     free(raiz);  
-    
+}
+
+int compararInfoNo(const void *a, const void *b) {
+    infoNo *infoA = (infoNo*)a;
+    infoNo *infoB = (infoNo*)b;
+
+    if (infoA->profundidade != infoB->profundidade) {
+        return infoA->profundidade - infoB->profundidade;
+    }
+
+    return infoA->valor - infoB->valor;
 }
 
 int main () {
-
     FILE *fp_in;
     FILE *fp_out;
     char linha[801];
@@ -165,7 +170,7 @@ int main () {
                 if (tipoOperacao == 'a') {
                     raiz = inserir(raiz, valor);
                 } else if (tipoOperacao == 'r') {
-                    raiz = removerNo(raiz, valor);
+                    raiz = removerNo(valor, raiz);
                 }
                 ptr_AtualCaractere += qtdeCaracterLido;
             } else {
@@ -174,7 +179,6 @@ int main () {
         }
 
         infoNo* listaNos = NULL;
- 
         int qtdeNos = 0;
         int capacidadeNos = 10;
         listaNos = (infoNo*)malloc(capacidadeNos * sizeof(infoNo));
@@ -189,8 +193,9 @@ int main () {
         
         coletarInfoNo(raiz, 0, &listaNos, &qtdeNos, &capacidadeNos);
         
+        qsort(listaNos, qtdeNos, sizeof(infoNo), compararInfoNo);
+        
         int i;
-
         for (i = 0; i < qtdeNos; i++) {
             fprintf(fp_out, "%d (%d)%s", listaNos[i].valor, listaNos[i].profundidade,
                     (i == qtdeNos - 1) ? "" : " ");
@@ -198,8 +203,6 @@ int main () {
         fprintf(fp_out, "\n");
 
         free(listaNos);
-        listaNos = NULL;
-
         excluirArvore(raiz);
     }
 
@@ -207,6 +210,4 @@ int main () {
     fclose(fp_out);
 
     return 0;
-
 }
-
