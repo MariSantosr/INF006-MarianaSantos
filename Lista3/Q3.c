@@ -39,8 +39,9 @@ No* inserir(No* raiz, int valor) {
 
     if (valor < raiz->valor) {
         raiz->esq = inserir(raiz->esq, valor);
-    } else { 
-        raiz->dir = inserir(raiz->dir, valor);
+    }
+    else { 
+        raiz->dir = insert(raiz->dir, valor);
     }
 
     return raiz; 
@@ -53,15 +54,15 @@ No* encontrarNoMenor(No* no) {
     return no;
 }
 
-No* removerNo(int valor, No* raiz) {
+No* removerNo(No* raiz, int valor) {
     if (raiz == NULL) {
-        return raiz;
+        return inserir(raiz, valor);
     }
 
     if (valor < raiz->valor) {
-        raiz->esq = removerNo(valor, raiz->esq);
+        raiz->esq = removerNo(raiz->esq, valor);
     } else if (valor > raiz->valor) {
-        raiz->dir = removerNo(valor, raiz->dir);
+        raiz->dir = removerNo(raiz->dir, valor);
     } else {
         if (raiz->esq == NULL) {
             No* temporario = raiz->dir;
@@ -74,11 +75,14 @@ No* removerNo(int valor, No* raiz) {
         }
 
         No* temporario = encontrarNoMenor(raiz->dir);
+
         raiz->valor = temporario->valor;
-        raiz->dir = removerNo(temporario->valor, raiz->dir);
+
+        raiz->dir = removerNo(raiz->dir, temporario->valor);
     }
 
     return raiz;
+
 }
 
 void coletarInfoNo(No* raiz, int profundidadeAtual, infoNo** lista, int* contador, int* capacidade) {
@@ -92,11 +96,11 @@ void coletarInfoNo(No* raiz, int profundidadeAtual, infoNo** lista, int* contado
         *capacidade *= 2;
         *lista = (infoNo*)realloc(*lista, *capacidade * sizeof(infoNo));
         if (*lista == NULL) {
-            perror("Erro ao alocar memória da lista de Nós");
+            perror("Erro na alocação de memória da lista de Nós");
             exit(EXIT_FAILURE);
         }
     }
-    
+
     (*lista)[*contador].valor = raiz->valor;
     (*lista)[*contador].profundidade = profundidadeAtual;
     (*contador)++;
@@ -108,24 +112,15 @@ void excluirArvore(No* raiz) {
     if (raiz == NULL) {
         return;
     }
-    
+
     excluirArvore(raiz->esq);  
     excluirArvore(raiz->dir); 
     free(raiz);  
-}
 
-int compararInfoNo(const void *a, const void *b) {
-    infoNo *infoA = (infoNo*)a;
-    infoNo *infoB = (infoNo*)b;
-
-    if (infoA->profundidade != infoB->profundidade) {
-        return infoA->profundidade - infoB->profundidade;
-    }
-
-    return infoA->valor - infoB->valor;
 }
 
 int main () {
+
     FILE *fp_in;
     FILE *fp_out;
     char linha[801];
@@ -145,7 +140,7 @@ int main () {
 
     while (fgets(linha, sizeof(linha), fp_in) != NULL) {
         No* raiz = NULL;
-        
+
         char *ptr_AtualCaractere = linha;
         int valor;
         char tipoOperacao;
@@ -170,7 +165,7 @@ int main () {
                 if (tipoOperacao == 'a') {
                     raiz = inserir(raiz, valor);
                 } else if (tipoOperacao == 'r') {
-                    raiz = removerNo(valor, raiz);
+                    raiz = removerNo(raiz, valor);
                 }
                 ptr_AtualCaractere += qtdeCaracterLido;
             } else {
@@ -179,10 +174,11 @@ int main () {
         }
 
         infoNo* listaNos = NULL;
+
         int qtdeNos = 0;
         int capacidadeNos = 10;
         listaNos = (infoNo*)malloc(capacidadeNos * sizeof(infoNo));
-        
+
         if (listaNos == NULL) {
             perror("Erro ao alocar memória inicial para a lista de nós.");
             fclose(fp_in);
@@ -190,12 +186,11 @@ int main () {
             excluirArvore(raiz);
             return EXIT_FAILURE;
         }
-        
+
         coletarInfoNo(raiz, 0, &listaNos, &qtdeNos, &capacidadeNos);
-        
-        qsort(listaNos, qtdeNos, sizeof(infoNo), compararInfoNo);
-        
+
         int i;
+
         for (i = 0; i < qtdeNos; i++) {
             fprintf(fp_out, "%d (%d)%s", listaNos[i].valor, listaNos[i].profundidade,
                     (i == qtdeNos - 1) ? "" : " ");
@@ -203,6 +198,8 @@ int main () {
         fprintf(fp_out, "\n");
 
         free(listaNos);
+        listaNos = NULL;
+
         excluirArvore(raiz);
     }
 
@@ -210,4 +207,5 @@ int main () {
     fclose(fp_out);
 
     return 0;
+
 }
