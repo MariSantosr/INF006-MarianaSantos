@@ -41,7 +41,7 @@ No* inserir(No* raiz, int valor) {
         raiz->esq = inserir(raiz->esq, valor);
     }
     else { 
-        raiz->dir = insert(raiz->dir, valor);
+        raiz->dir = inserir(raiz->dir, valor);
     }
 
     return raiz; 
