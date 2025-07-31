@@ -16,7 +16,7 @@ typedef struct No {
 No* criarNo(int chave, No* pai) {
     No* novo = malloc(sizeof(No));
     if (novo == NULL) {
-        perror("Erro na alocação de memória do Nó");
+        perror("Failed to allocate memory for new node");
         exit(EXIT_FAILURE);
     }
     novo->chave = chave;
@@ -71,12 +71,14 @@ void encontrarNoMaisProfundo(No* raiz, No** noProfundo) {
     encontrarNoMaisProfundo(raiz->dir, noProfundo);
 }
 
+// --- FUNÇÃO CORRIGIDA ---
 No* encontrarPredecessorDoNo(No* no) {
     if (no == NULL) {
         return NULL;
     }
 
-
+    // Caso 1: O nó tem uma subárvore à esquerda.
+    // O predecessor é o nó mais à direita (de maior valor) nessa subárvore.
     if (no->esq != NULL) {
         No* cursor = no->esq;
         while (cursor->dir != NULL) {
@@ -85,6 +87,10 @@ No* encontrarPredecessorDoNo(No* no) {
         return cursor;
     }
 
+    // Caso 2: O nó NÃO tem subárvore à esquerda.
+    // O predecessor é um ancestral. Subimos na árvore a partir do 'no' atual.
+    // O predecessor é o primeiro ancestral para o qual o caminho que fizemos
+    // para chegar até ele veio pela direita.
     No* pai = no->pai;
     No* filho = no;
     while (pai != NULL && filho == pai->esq) {
@@ -103,9 +109,9 @@ void liberarArvore(No* raiz) {
 }
 
 int main() {
-    FILE* fp_in = fopen("L2Q1.in", "r");
-    FILE* fp_out = fopen("L2Q1.out", "w");
-    if (!fp_in || !fp_out) {
+    FILE* fin = fopen("L2Q1.in", "r");
+    FILE* fout = fopen("L2Q1.out", "w");
+    if (!fin || !fout) {
         fprintf(stderr, "Erro ao abrir arquivos L2Q1.in ou L2Q1.out\n");
         return 1;
     }
@@ -113,9 +119,9 @@ int main() {
     char linha[MAX_LINE_LENGTH];
     int line_num = 0;
 
-    while (fgets(linha, sizeof(linha), fp_in)) {
+    while (fgets(linha, sizeof(linha), fin)) {
         line_num++;
-        
+        //fprintf(stderr, "\n--- Processando Linha %d ---\n", line_num);
         No* raiz = NULL;
         No* noMaximo = NULL;
         No* inserted_nodes[MAX_NODES_PER_LINE];
@@ -125,7 +131,7 @@ int main() {
         char* endptr;
         long val;
 
-        
+        //fprintf(stderr, "Valores lidos da linha %d: ", line_num);
         while (1) {
             val = strtol(ptr, &endptr, 10);
 
@@ -133,10 +139,10 @@ int main() {
                 break;
             }
 
-            
+            //fprintf(stderr, "%ld ", val);
 
             if (n >= MAX_NODES_PER_LINE) {
-
+                //fprintf(stderr, "\nERRO: Limite de MAX_NODES_PER_LINE (%d) excedido na linha %d! Interrompendo insercao.\n", MAX_NODES_PER_LINE, line_num);
                 break;
             }
 
@@ -174,19 +180,23 @@ int main() {
         //fprintf(stderr, "\n");
 
         if (raiz == NULL && n == 0) {
-            fprintf(fp_out, "max NaN alt NaN pred NaN\n");
+            fprintf(fout, "max NaN alt NaN pred NaN\n");
             continue;
         }
         if (raiz == NULL) {
-            fprintf(fp_out, "Erro interno: raiz nula apos insercao na linha %d\n", line_num);
+            fprintf(fout, "Erro interno: raiz nula apos insercao na linha %d\n", line_num);
             continue;
         }
 
         atualizarAlturasRaiz(raiz);
 
+        //fprintf(stderr, "Arvore (Inorder - Chave H:Altura P:Pai) para linha %d:\n", line_num);
+        //imprimirInorderDebug(raiz);
+        //fprintf(stderr, "\n");
+
         for (int i = 0; i < n; i++) {
-            fprintf(fp_out, "%d", inserted_nodes[i]->altura);
-            if (i < n - 1) fprintf(fp_out, " ");
+            fprintf(fout, "%d", inserted_nodes[i]->altura);
+            if (i < n - 1) fprintf(fout, " ");
         }
 
         noMaximo = NULL;
@@ -196,29 +206,28 @@ int main() {
         encontrarNoMaisProfundo(raiz, &noProfundo);
 
         if (noMaximo != NULL && noProfundo != NULL) {
-            fprintf(fp_out, " max %d alt %d pred ", noMaximo->chave, noProfundo->altura);
+            fprintf(fout, " max %d alt %d pred ", noMaximo->chave, noProfundo->altura);
             
             No* pred = encontrarPredecessorDoNo(noMaximo);
             if (pred)
-                fprintf(fp_out, "%d\n", pred->chave);
+                fprintf(fout, "%d\n", pred->chave);
             else
-                fprintf(fp_out, "NaN\n");
+                fprintf(fout, "NaN\n");
         } else if (noMaximo != NULL) {
-            fprintf(fp_out, " max %d alt %d pred ", noMaximo->chave, noMaximo->altura);
+            fprintf(fout, " max %d alt %d pred ", noMaximo->chave, noMaximo->altura);
             No* pred = encontrarPredecessorDoNo(noMaximo);
              if (pred)
-                fprintf(fp_out, "%d\n", pred->chave);
+                fprintf(fout, "%d\n", pred->chave);
             else
-                fprintf(fp_out, "NaN\n");
+                fprintf(fout, "NaN\n");
         } else {
-            fprintf(fp_out, " max NaN alt NaN pred NaN\n");
+            fprintf(fout, " max NaN alt NaN pred NaN\n");
         }
         
         liberarArvore(raiz);
     }
 
-    fclose(fp_in);
-    fclose(fp_out);
-    
+    fclose(fin);
+    fclose(fout);
     return 0;
 }
